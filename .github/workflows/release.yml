@@ -17,8 +17,6 @@ jobs:
       matrix:
         include:
           - platform: windows-latest   # .msi / .exe 安装包
-          - platform: macos-latest     # .dmg / .app
-          - platform: ubuntu-22.04     # .deb / .AppImage
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4

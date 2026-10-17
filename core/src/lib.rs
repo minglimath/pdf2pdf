@@ -296,11 +296,11 @@ fn page_content_bytes(doc: &PdfDocument, page_id: ObjectId) -> Result<Vec<u8>> {
     };
     let mut out = Vec::new();
     match contents {
-        Object::Stream(s) => out.extend_from_slice(&s.decode_content()?),
+        Object::Stream(s) => out.extend_from_slice(&s.decompressed_content()?),
         Object::Array(items) => {
             for item in items {
                 if let Object::Stream(s) = resolve(doc, item)? {
-                    out.extend_from_slice(&s.decode_content()?);
+                    out.extend_from_slice(&s.decompressed_content()?);
                     out.extend_from_slice(b"\n");
                 }
             }
@@ -328,7 +328,7 @@ fn add_form_xobject(
     let pdict = as_dict(page, "Page")?;
     let resources = match pdict.get(b"Resources") {
         Ok(r) => resolve(src, r)?.clone(),
-        Err(_) => dictionary! {},
+        Err(_) => Object::Dictionary(dictionary! {}),
     };
 
     let dict = dictionary! {
@@ -537,12 +537,13 @@ pub fn crop_pdf(input: &Path, output: &Path, options: &CropOptions) -> Result<Cr
     if kids.is_empty() {
         return Err(CoreError::msg("没有可写入的页面"));
     }
+    let pages = kids.len();
     finalize_document(&mut out_doc, kids);
     out_doc.save(output)?;
 
     Ok(CropOutcome {
         regions: n_forms_used,
-        pages: kids.len(),
+        pages,
         output: output.to_string_lossy().into_owned(),
     })
 }
