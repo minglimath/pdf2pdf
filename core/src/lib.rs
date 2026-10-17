@@ -287,6 +287,17 @@ fn page_rect_annotations(doc: &PdfDocument, page_id: ObjectId) -> Result<Vec<[f6
 // 第二步：Form XObject（矢量裁剪的关键）
 // ============================================================
 /// 拼接页面所有内容流（已解码）
+/// 读取流的解码后字节。
+/// 注意：lopdf 的 `decompressed_content()` 在流没有 /Filter 键时会报错，
+/// 因此这里判断：有 /Filter 才解压，否则直接取明文内容（get_plain_content）。
+fn stream_bytes(s: &lopdf::Stream) -> Result<Vec<u8>> {
+    if s.dict.get(b"Filter").is_ok() {
+        Ok(s.decompressed_content()?)
+    } else {
+        Ok(s.get_plain_content()?)
+    }
+}
+
 fn page_content_bytes(doc: &PdfDocument, page_id: ObjectId) -> Result<Vec<u8>> {
     let page = doc.get_object(page_id)?;
     let dict = as_dict(page, "Page")?;
@@ -296,11 +307,11 @@ fn page_content_bytes(doc: &PdfDocument, page_id: ObjectId) -> Result<Vec<u8>> {
     };
     let mut out = Vec::new();
     match contents {
-        Object::Stream(s) => out.extend_from_slice(&s.decompressed_content()?),
+        Object::Stream(s) => out.extend_from_slice(&stream_bytes(s)?),
         Object::Array(items) => {
             for item in items {
                 if let Object::Stream(s) = resolve(doc, item)? {
-                    out.extend_from_slice(&s.decompressed_content()?);
+                    out.extend_from_slice(&stream_bytes(s)?);
                     out.extend_from_slice(b"\n");
                 }
             }
