@@ -13,11 +13,6 @@ struct CropResult {
     output: String,
 }
 
-/// 把 CoreError 转成字符串（Tauri 命令要求错误为 String）
-fn err_to_string(e: CoreError) -> String {
-    e.to_string()
-}
-
 /// 裁剪主命令：由前端 invoke 调用
 ///
 /// Args:
@@ -78,7 +73,7 @@ fn crop_pdf_cmd(
     };
 
     // 加载源文档解析页码范围
-    let doc = lopdf::Document::load(&input_path).map_err(err_to_string)?;
+    let doc = lopdf::Document::load(&input_path).map_err(|e| e.to_string())?;
     let total = doc.get_pages().len() as u32;
     drop(doc);
     let mut options = options;
