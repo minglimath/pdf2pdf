@@ -5,6 +5,10 @@ edition = "2021"
 description = "PDF 矩形注释裁剪工具（Tauri 桌面版）"
 license = "MIT"
 
+[lib]
+name = "pdf_crop_lib"
+crate-type = ["rlib"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
