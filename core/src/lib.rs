@@ -629,7 +629,12 @@ mod tests {
     }
 
     fn tmp_dir() -> PathBuf {
-        let d = std::env::temp_dir().join(format!("pdf-crop-test-{}", std::process::id()));
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        // 每个测试用独立子目录：cargo test 默认多线程并行，
+        // 共享目录会导致 make_sample_pdf 互相覆写 sample.pdf 引发竞态
+        let n = COUNTER.fetch_add(1, Ordering::SeqCst);
+        let d = std::env::temp_dir().join(format!("pdf-crop-test-{}-{}", std::process::id(), n));
         std::fs::create_dir_all(&d).unwrap();
         d
     }
