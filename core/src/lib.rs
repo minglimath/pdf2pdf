@@ -675,7 +675,8 @@ mod tests {
         // 校验输出：4 页，页面尺寸 = 注释区域尺寸
         let out_doc = PdfDocument::load(&out).unwrap();
         assert_eq!(out_doc.get_pages().len(), 4);
-        let first = out_doc.get_pages().get(&1).unwrap();
+        let pages = out_doc.get_pages();
+        let first = pages.get(&1).unwrap();
         let mb = page_mediabox(&out_doc, *first).unwrap();
         assert_eq!((mb[2], mb[3]), (200.0, 100.0));
     }
@@ -704,7 +705,8 @@ mod tests {
 
         let out_doc = PdfDocument::load(&out).unwrap();
         assert_eq!(out_doc.get_pages().len(), 1);
-        let first = out_doc.get_pages().get(&1).unwrap();
+        let pages = out_doc.get_pages();
+        let first = pages.get(&1).unwrap();
         let mb = page_mediabox(&out_doc, *first).unwrap();
         assert_eq!((mb[2], mb[3]), (595.0, 842.0), "拼版页面必须是 A4");
     }
@@ -764,7 +766,8 @@ mod tests {
         assert_eq!(outcome.pages, 2);
 
         let out_doc = PdfDocument::load(&out).unwrap();
-        let first = out_doc.get_pages().get(&1).unwrap();
+        let pages = out_doc.get_pages();
+        let first = pages.get(&1).unwrap();
         let mb = page_mediabox(&out_doc, *first).unwrap();
         assert_eq!((mb[2], mb[3]), (420.0, 270.0));
     }
@@ -790,7 +793,8 @@ mod tests {
         assert_eq!(outcome.regions, 3);
 
         let out_doc = PdfDocument::load(&out).unwrap();
-        let first = out_doc.get_pages().get(&1).unwrap();
+        let pages = out_doc.get_pages();
+        let first = pages.get(&1).unwrap();
         let mb = page_mediabox(&out_doc, *first).unwrap();
         assert_eq!((mb[2], mb[3]), (523.0, 770.0));
     }
