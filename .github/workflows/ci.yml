@@ -1,0 +1,22 @@
+# CI：每次 push / PR 自动跑核心逻辑单元测试（不需要任何密钥）
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-core:
+    name: 核心逻辑测试
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+      - uses: Swatinem/rust-cache@v2
+      - name: 运行 pdf-crop-core 单元测试
+        run: cargo test -p pdf-crop-core --release
+      - name: 检查 Tauri 壳编译（cargo check，不链接）
+        run: cargo check -p pdf-crop-tauri --all-targets

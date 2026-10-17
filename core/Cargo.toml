@@ -1,0 +1,10 @@
+[package]
+name = "pdf-crop-core"
+version = "0.1.0"
+edition = "2021"
+description = "PDF 矩形注释裁剪核心逻辑（纯 Rust，无 GUI 依赖）"
+license = "MIT"
+
+[dependencies]
+lopdf = "0.36"
+thiserror = "2"

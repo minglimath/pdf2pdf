@@ -1,0 +1,7 @@
+/target/
+dist/
+node_modules/
+*.local
+.DS_Store
+Thumbs.db
+.gen/

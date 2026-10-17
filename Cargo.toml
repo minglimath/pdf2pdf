@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = ["core", "src-tauri"]
+
+[profile.release]
+# 进一步压缩体积：开优化、去符号、LTO
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
