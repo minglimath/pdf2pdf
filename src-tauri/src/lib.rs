@@ -2,7 +2,7 @@
 
 use std::path::PathBuf;
 
-use pdf_crop_core::{crop_pdf, parse_page_range, CoreError, CropOptions, CropSource, Layout};
+use pdf_crop_core::{crop_pdf, parse_page_range, CropOptions, CropSource, Layout};
 use serde::Serialize;
 
 /// 返回给前端的结果
@@ -77,9 +77,9 @@ fn crop_pdf_cmd(
     let total = doc.get_pages().len() as u32;
     drop(doc);
     let mut options = options;
-    options.page_numbers = parse_page_range(&page_range, total).map_err(err_to_string)?;
+    options.page_numbers = parse_page_range(&page_range, total).map_err(|e| e.to_string())?;
 
-    let outcome = crop_pdf(&input_path, &output_path, &options).map_err(err_to_string)?;
+    let outcome = crop_pdf(&input_path, &output_path, &options).map_err(|e| e.to_string())?;
     Ok(CropResult {
         regions: outcome.regions,
         pages: outcome.pages,
